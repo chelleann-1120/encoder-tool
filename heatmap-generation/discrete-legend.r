@@ -11,7 +11,7 @@ if (!require(colorspace)) {
 library(colorspace)
 
 # Set the csv file directory
-setwd("C:\\Users\\roche\\Desktop\\Thesis-related\\included-dataset-final")
+setwd("D:\\encoder-tool\\included-dataset-final-test")
 
 print(getwd())
 
@@ -164,7 +164,7 @@ for (current_file in file_list) {
                       ))
 
   # Define the output directory
-  output_dir <- "C:\\Users\\roche\\Desktop\\Thesis-related\\generated-heatmaps"
+  output_dir <- "D:\\encoder-tool\\generated-heatmaps"
 
   # Ensure the directory exists
   if (!dir.exists(output_dir)) {
@@ -228,7 +228,7 @@ for (current_file in file_list) {
                               grid_width = unit(0.9, "cm")) #color cell width
 
   # Save the heatmap to the specified directoryS
-  png(output_file, width = 1300, height = 1100)
+  png(output_file, width = 1400, height = 1100)
 
   draw(heatmap, heatmap_legend_side = "right",
        annotation_legend_side = "right", padding = padding_value)
