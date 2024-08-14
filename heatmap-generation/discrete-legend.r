@@ -64,12 +64,12 @@ for (current_file in file_list) {
 
   # Generate range labels for the legend
   labels <- sapply(1:(length(breaks) - 1), function(i) {
-    paste0(format_value(breaks[i]), " to ", format_value(breaks[i + 1]))
+    paste0(format_value(breaks[i]), "  to  ", format_value(breaks[i + 1]))
   })
 
   # Ensure the last label includes the maximum value
   labels[length(labels)] <- paste0(format_value(breaks[length(breaks) - 1]),
-                                    " to ", format_value(max_val))
+                                   "  to  ", format_value(max_val))
 
   color_array_light <- c("#75ddff", "#8ddf00", "#ff9292",
                          "#ff8944", "#ff8b9f",
