@@ -56,6 +56,15 @@ class TextRemover:
   def remove_title(self):
     pass
 
+  def remove_xaxis_label(self):
+    pass
+
+  def remove_yaxis_label(self):
+    pass
+
+  def remove_legend_values(self):
+    pass
+
 class ColorExtractor:
   pass
   
