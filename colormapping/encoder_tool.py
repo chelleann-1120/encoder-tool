@@ -12,12 +12,9 @@ class ROI:
 
   def __init__(self, contours, image_path):
     self.contours = contours
-    self.image_path = image_path
+    self.image = Image.open(image_path)
+    self.image_np = np.array(self.image)
     self.largest_contour = self.detect_grid()
-    self.roi_yaxis = self.detect_y_axis()
-    self.roi_xaxis = self.detect_x_axis()
-    self.roi_legend = self.detect_legend()
-
 
   def detect_grid(self):
     max_area = 0
@@ -32,41 +29,43 @@ class ROI:
     return largest_contour
 
   def draw_bounding_boxes(self, roi):
-    # Load the image
-    image = Image.open(self.image_path)
-    image_np = np.array(image)
-
-    # Draw bounding box around the largest contour
-    if self.largest_contour is not None:
-      x, y, w, h = cv2.boundingRect(self.largest_contour)
-      cv2.rectangle(image_np, (x, y), (x + w, y + h), (255, 0, 0), 2)
-
-    # Crop the image to the region of interest defined by left_x
-    roi_image_np = image_np[y:y + h, roi:x]
 
     # Display the cropped region of interest
-    plt.imshow(roi_image_np)
+    plt.imshow(roi)
     plt.axis('off')
     plt.show()
   
-  
-  def detect_y_axis(self):
-    image = Image.open(self.image_path)
-
-    # Draw bounding box around the largest contour
+  def detect_title(self):
+    
     if self.largest_contour is not None:
       x, y, w, h = cv2.boundingRect(self.largest_contour)
-      cv2.rectangle(np.array(image), (x, y), (x + w, y + h), (255, 0, 0), 2)
+      top = max(0, y - h)
+      roi_above = self.image_np[top:y, :]
+      self.draw_bounding_boxes(roi_above)
+  
+  def detect_y_axis(self):
 
-    # Draw bounding box to the left of the largest contour
-    left_x = max(0, x - w)
-    self.draw_bounding_boxes(left_x)
+    if self.largest_contour is not None:
+      x, y, w, h = cv2.boundingRect(self.largest_contour)
+      left = max(0, x - w)
+      roi_yaxis = self.image_np[y:y + h, left:x]
+      self.draw_bounding_boxes(roi_yaxis)
 
   def detect_x_axis(self):
-    pass
+
+    if self.largest_contour is not None:
+      x, y, w, h = cv2.boundingRect(self.largest_contour)
+      bottom = min(self.image_np.shape[0], y + 2 * h)
+      roi_xaxis = self.image_np[y + h:bottom, x:x + w]
+      self.draw_bounding_boxes(roi_xaxis)
 
   def detect_legend(self):
-    pass
+
+    if self.largest_contour is not None:
+      x, y, w, h = cv2.boundingRect(self.largest_contour)
+      right = min(self.image_np.shape[1], x + 2 * w)
+      roi_legend = self.image_np[y:y + h, x + w:right]
+      self.draw_bounding_boxes(roi_legend)
 
 class TextExtraction:
   '''
@@ -88,27 +87,6 @@ class TextExtraction:
   def extract_legend_values(self):
     pass
 
-
-class TextRemover:
-  '''
-  Removes the extracted text within the region of interest to avoid overlapping of other
-  irrelevant text within the ROI.
-  '''
-
-  def __init__(self):
-    pass
-
-  def remove_title(self):
-    pass
-
-  def remove_xaxis_label(self):
-    pass
-
-  def remove_yaxis_label(self):
-    pass
-
-  def remove_legend_values(self):
-    pass
 
 class ColorExtractor:
   pass

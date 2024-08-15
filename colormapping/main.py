@@ -29,7 +29,7 @@ class HeatmapEncoder:
       contours = self.find_contours(img)
 
       grid = ROI(contours, image_path)
-      grid.draw_bounding_boxes()
+      grid.detect_title()
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"
