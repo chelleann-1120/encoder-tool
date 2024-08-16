@@ -15,8 +15,8 @@ class HeatmapEncoder:
     
     for image in images:
       image_path = os.path.join(self.input_dir, image)
-      test = ColorExtractor(image_path)
-      test.extract_legend_color()
+      test = TextExtraction(image_path)
+      test.extract_legend_values()
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"

@@ -8,7 +8,7 @@ import os
 
 class ROI:
   '''
-  Identifies the region of interest. 
+  Identifies the region of interest for the extraction of text
   '''
 
   def __init__(self, image_path):
@@ -17,7 +17,6 @@ class ROI:
     self.contours = self.find_contours()
     self.image_np = np.array(self.image)
     self.largest_contour = self.detect_grid()
-    self.legend = self.detect_color_legend()
 
   def find_contours(self):
 
@@ -46,18 +45,16 @@ class ROI:
       area = cv2.contourArea(contour)
 
       if 1000 < area < 10000:
-        #self.draw_bounding_box(contour)
-        x, y, width, height = cv2.boundingRect(contour)
-        return (x, y, width, height)
+        return contour
 
   # Display the cropped region of interest
   def draw_bounding_box(self, roi):
 
-    x, y, w, h = cv2.boundingRect(roi)
+    gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    x, y, w, h = cv2.boundingRect(gray_roi)
     cv2.rectangle(self.image_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-    print("Processing bounding box")
-    plt.imshow(self.image_np)
+    plt.imshow(cv2.cvtColor(self.image_np, cv2.COLOR_BGR2RGB))
+    plt.title("Bounding Box")
     plt.axis('off')
     plt.show()
   
@@ -89,13 +86,14 @@ class ROI:
       return xaxis_roi
 
   def detect_legend_roi(self):
-
     if self.largest_contour is not None:
       x, y, w, h = cv2.boundingRect(self.largest_contour)
-      right = min(self.image_np.shape[1], x + 2 * w)
+      right = max(self.image_np.shape[1], x + 2 * w)
       legend_roi = self.image_np[y:y + h, x + w:right]
+      self.draw_bounding_box(legend_roi)
 
-      return (x, y, w, h, right)
+      # Crop the image and return a copy without modifying the original
+    return legend_roi
 
 
 class ColorExtractor(ROI):
@@ -108,30 +106,6 @@ class ColorExtractor(ROI):
     self.image_path = image_path
     self.color_legend = self.detect_color_legend()
 
-  def extract_legend_color(self):
-    image = Image.open(self.image_path).convert('RGB')
-    image_array = np.array(image)
-
-    x, y, width, height = map(int, self.color_legend)
-    legend_roi = image_array[y:y+height, x:x+width]
-
-    unique_colors = []
-    for row in legend_roi:
-        for color in row:
-            if not np.array_equal(color, [0, 0, 0]) and not any(np.array_equal(color, c) for c in unique_colors):
-                unique_colors.append(color)
-
-    unique_colors = np.array(unique_colors)
-
-    plt.figure(figsize=(10, 2))
-    plt.imshow([unique_colors], aspect='auto')
-    plt.title(self.image_path)
-    plt.axis('off')
-    plt.show()
-
-  def extract_gridcells_color(self):
-    pass
-
 
 class TextExtraction(ColorExtractor):
   '''
@@ -141,7 +115,7 @@ class TextExtraction(ColorExtractor):
     super().__init__(image_path)
     self.image_path = image_path
     self.img = cv2.imread(image_path)
-    self.legend_color = self.extract_legend_color()
+    #self.legend_color = self.extract_legend_color()
     self.title_roi = self.detect_title_roi()
     self.yaxis_roi = self.detect_yaxis_roi()
     self.xaxis_roi = self.detect_xaxis_roi()
@@ -158,25 +132,48 @@ class TextExtraction(ColorExtractor):
     return yaxis_text
 
   def extract_xaxis_labels(self):
-    xaxis_text = pytesseract.image_to_string(self.xaxis_roi)
+    
+    xaxis_roi = self.detect_xaxis_roi()
+    
+    cropped_image = Image.fromarray(cv2.cvtColor(xaxis_roi, cv2.COLOR_BGR2RGB))
+    rotated_image = cropped_image.rotate(-90, expand=True)
+    
+    xaxis_text = pytesseract.image_to_string(rotated_image)
     print("Extracted x-axis labels text:", xaxis_text)
     return xaxis_text
 
+  def remove_legend(self):
+
+    contour = self.detect_color_legend()
+    if contour is not None:
+        cv2.drawContours(self.image, [contour], -1, (255, 255, 255), thickness=cv2.FILLED)
+    else:
+        print("No legend contour found")
+
+
   def extract_legend_values(self):
     self.remove_legend()
-    legend_text = pytesseract.image_to_string(self.legend_roi)
+
+    largest_contour = self.detect_grid()
+    if largest_contour is None:
+        return None
+
+    x, y, w, h = cv2.boundingRect(largest_contour)
+    roi = self.image_np[y:y+h, x+w:]
+
+    # Convert the ROI to a PIL image
+    roi_image = Image.fromarray(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
+
+    # Extract text using Tesseract
+    legend_text = pytesseract.image_to_string(roi_image)
     print("Extracted legend text:", legend_text)
     return legend_text
-  
-  def remove_legend(self):
-    legend_roi_coords = self.detect_legend_roi()
-    if legend_roi_coords is not None:
-      x, y, w, h, right = legend_roi_coords
-      # Set the legend ROI to black
-      self.image_np[y:y + h, x + w:right] = 0
-      print("Legend removed.")
-    else:
-      print("Legend ROI not found.")
+
+
+  def display_image(self):
+    plt.imshow(cv2.cvtColor(self.image_np, cv2.COLOR_BGR2RGB))
+    plt.axis('off')  # Hide the axis
+    plt.show()
 
 
 class GridProcessor:
