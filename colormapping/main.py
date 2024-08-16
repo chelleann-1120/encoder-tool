@@ -1,4 +1,4 @@
-from encoder_tool import *
+from text_extraction import *
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,7 +15,8 @@ class HeatmapEncoder:
     
     for image in images:
       image_path = os.path.join(self.input_dir, image)
-      test = TextExtraction(image_path)
+      print(image)
+      test = TextExtraction(image_path, image)
       test.extract_legend_values()
 
 if __name__ == "__main__":
