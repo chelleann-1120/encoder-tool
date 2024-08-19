@@ -7,8 +7,11 @@ class ColorMapping(TextExtraction, GridProcessor):
     super.__init__(self, image_path)
     pass
 
+  def map_legend_color(self):
+    pass
+
   def map_legend_values(self):
     pass
 
-  def map_gridcells_values(self):
+  def map_gridcells_color(self):
     pass
