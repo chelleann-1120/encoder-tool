@@ -4,6 +4,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class HeatmapEncoder:
 
   def __init__(self, input_dir):
@@ -19,7 +20,7 @@ class HeatmapEncoder:
       image_path = os.path.join(self.input_dir, image)
       values = TextExtraction(image_path, image)
       matrix = GridProcessor(values)
-      values.extract_legend_color()
+      matrix.format_yaxis_label()
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"

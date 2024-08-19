@@ -9,6 +9,7 @@ class TextExtraction(ColorExtractor):
   '''
   Extracts the text in the given region of interest.
   '''
+  
   def __init__(self, image_path, image_name):
     super().__init__(image_path, image_name)
     self.image_path = image_path
@@ -29,12 +30,10 @@ class TextExtraction(ColorExtractor):
 
   def extract_title(self):
     title_text = pytesseract.image_to_string(self.title_roi)
-    print("Extracted title text:", title_text)
     return title_text
 
   def extract_yaxis_labels(self):
     yaxis_text = pytesseract.image_to_string(self.yaxis_roi)
-    print("Extracted y-axis labels text:", yaxis_text)
     return yaxis_text
 
   def extract_xaxis_labels(self):
@@ -45,7 +44,6 @@ class TextExtraction(ColorExtractor):
     rotated_image = cropped_image.rotate(-90, expand=True)
     
     xaxis_text = pytesseract.image_to_string(rotated_image)
-    print("Extracted x-axis labels text:", xaxis_text)
     return xaxis_text
 
   def remove_legend(self):
@@ -57,28 +55,16 @@ class TextExtraction(ColorExtractor):
     else:
         print("No legend contour found")
 
-
   def extract_legend_values(self):
     self.remove_legend()
 
     preprocessed_image = self.preprocess_image()
-
     x, y, w, h = cv2.boundingRect(self.largest_contour)
     roi = preprocessed_image[y:y+h, x+w:]
 
-    # Draw bounding box on the original image
-    cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
-
-    # Convert the ROI to a PIL image
     roi_image = Image.fromarray(cv2.cvtColor(roi, cv2.COLOR_BGR2RGB))
-
-    # Extract text using Tesseract
     custom_config = r'--psm 6 -c preserve_interword_spaces=1 --oem 3'
     legend_text = pytesseract.image_to_string(roi_image, config=custom_config)
-    print("Extracted legend text: \n", legend_text)
-
-    output_path = os.path.join("D:\\encoder-tool\\test-output-images", self.image_name)
-    cv2.imwrite(output_path, self.image)  # Save the image with the bounding box
 
     return legend_text
 
