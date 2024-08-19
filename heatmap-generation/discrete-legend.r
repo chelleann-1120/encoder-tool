@@ -227,7 +227,7 @@ for (current_file in file_list) {
                               grid_height = unit(0.9, "cm"), #color cell height
                               grid_width = unit(0.9, "cm")) #color cell width
 
-  # Save the heatmap to the specified directoryS
+  # Save the heatmap to the specified directory
   png(output_file, width = 1400, height = 1100)
 
   draw(heatmap, heatmap_legend_side = "right",

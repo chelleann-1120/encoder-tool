@@ -61,10 +61,9 @@ class TextExtraction(ColorExtractor):
   def extract_legend_values(self):
     self.remove_legend()
 
-    largest_contour = self.detect_grid()
     preprocessed_image = self.preprocess_image()
 
-    x, y, w, h = cv2.boundingRect(largest_contour)
+    x, y, w, h = cv2.boundingRect(self.largest_contour)
     roi = preprocessed_image[y:y+h, x+w:]
 
     # Draw bounding box on the original image

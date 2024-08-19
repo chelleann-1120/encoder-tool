@@ -1,4 +1,5 @@
-from text_extraction import *
+from text_extraction import TextExtraction
+from format_text import GridProcessor
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,10 +15,11 @@ class HeatmapEncoder:
     images = sorted(os.listdir(self.input_dir), key=lambda x: [ord(c) for c in x])
     
     for image in images:
+      
       image_path = os.path.join(self.input_dir, image)
-      print(image)
-      test = TextExtraction(image_path, image)
-      test.extract_legend_color()
+      values = TextExtraction(image_path, image)
+      matrix = GridProcessor(values)
+      values.extract_legend_color()
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"
