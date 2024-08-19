@@ -1,11 +1,11 @@
 import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
-from region_detection import RegionDetection
+from color_extraction import ColorExtractor
 import pytesseract
 import os
 
-class TextExtraction(RegionDetection):
+class TextExtraction(ColorExtractor):
   '''
   Extracts the text in the given region of interest.
   '''

@@ -1,15 +1,16 @@
 import cv2
 import numpy as np
-from PIL import Image
 import matplotlib.pyplot as plt
 
-class ROI:
+
+class RegionDetection:
   '''
   Identifies the region of interest for the extraction of text
   '''
 
-  def __init__(self, image_path):
+  def __init__(self, image_path, image_name):
     self.image_path = image_path
+    self.image_name = image_name
     self.image = cv2.imread(self.image_path)
     self.contours = self.find_contours()
     self.image_np = np.array(self.image)
@@ -83,11 +84,9 @@ class ROI:
       return xaxis_roi
 
   def detect_legend_roi(self):
-    if self.largest_contour is not None:
-      x, y, w, h = cv2.boundingRect(self.largest_contour)
-      right = max(self.image_np.shape[1], x + 2 * w)
-      legend_roi = self.image_np[y:y + h, x + w:right]
-      self.draw_bounding_box(legend_roi)
+    
+    x, y, w, h = cv2.boundingRect(self.largest_contour)
+    right = max(self.image.shape[1], x + 2 * w)
+    legend_roi = self.image[y:y + h, x + w:right]
 
-      # Crop the image and return a copy without modifying the original
     return legend_roi
