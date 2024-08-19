@@ -9,7 +9,7 @@ class TextExtraction(ColorExtractor):
   '''
   Extracts the text in the given region of interest.
   '''
-  
+
   def __init__(self, image_path, image_name):
     super().__init__(image_path, image_name)
     self.image_path = image_path
@@ -23,23 +23,24 @@ class TextExtraction(ColorExtractor):
       raise FileNotFoundError(f"Image not found or unable to read: {image_path}")
 
   def preprocess_image(self):
-    # Example preprocessing steps
+
     gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
     _, binary = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
     return binary
 
   def extract_title(self):
+
     title_text = pytesseract.image_to_string(self.title_roi)
     return title_text
 
   def extract_yaxis_labels(self):
+
     yaxis_text = pytesseract.image_to_string(self.yaxis_roi)
     return yaxis_text
 
   def extract_xaxis_labels(self):
     
     xaxis_roi = self.detect_xaxis_roi()
-    
     cropped_image = Image.fromarray(cv2.cvtColor(xaxis_roi, cv2.COLOR_BGR2RGB))
     rotated_image = cropped_image.rotate(-90, expand=True)
     
@@ -49,15 +50,14 @@ class TextExtraction(ColorExtractor):
   def remove_legend(self):
 
     contour = self.detect_color_legend()
-
     if contour is not None:
-        cv2.drawContours(self.image, [contour], -1, (255, 255, 255), thickness=cv2.FILLED)
+      cv2.drawContours(self.image, [contour], -1, (255, 255, 255), thickness=cv2.FILLED)
     else:
-        print("No legend contour found")
+      print("No legend found in ", self.image_name)
 
   def extract_legend_values(self):
-    self.remove_legend()
 
+    self.remove_legend()
     preprocessed_image = self.preprocess_image()
     x, y, w, h = cv2.boundingRect(self.largest_contour)
     roi = preprocessed_image[y:y+h, x+w:]
@@ -68,8 +68,8 @@ class TextExtraction(ColorExtractor):
 
     return legend_text
 
-
   def display_image(self):
+    
     plt.imshow(cv2.cvtColor(self.image_np, cv2.COLOR_BGR2RGB))
     plt.axis('off')  # Hide the axis
     plt.show()

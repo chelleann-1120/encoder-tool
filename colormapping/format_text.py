@@ -7,6 +7,8 @@ class TextFormatter:
 
   def format_title(self):
     title = self.text.extract_title()
+    title = title.replace('\n', ' ')
+    return title
   
   def format_yaxis_label(self):
     

@@ -20,7 +20,7 @@ class HeatmapEncoder:
       image_path = os.path.join(self.input_dir, image)
       values = TextExtraction(image_path, image)
       matrix = GridProcessor(values)
-      matrix.format_yaxis_label()
+      matrix.format_title()
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"
