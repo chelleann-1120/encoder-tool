@@ -24,16 +24,22 @@ class ColorExtractor(RegionDetection):
 
     unique_colors = []
     seen = set()
+
     for color in flattened_colors:
         color_tuple = tuple(color)
+
         if color_tuple not in seen:
             seen.add(color_tuple)
             unique_colors.append(color)
 
-    unique_colors = np.array(unique_colors)
-
+    hex_colors = [self.rgb_to_hex(color) for color in unique_colors]
+    return hex_colors
+  
     plt.figure(figsize=(10, 2))
     plt.imshow([unique_colors], aspect='auto')
     plt.title(self.image_path)
     plt.axis('off')
     plt.show()
+  
+  def rgb_to_hex(self, color):
+    return "#{:02x}{:02x}{:02x}".format(color[0], color[1], color[2])
