@@ -35,6 +35,7 @@ class RegionDetection:
         max_area = area
         largest_contour = contour
 
+    # Assuming that this is the gridcell
     return largest_contour
   
   def detect_color_legend(self):
