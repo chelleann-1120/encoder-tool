@@ -3,6 +3,7 @@ import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 from region_detection import RegionDetection
+from collections import defaultdict
 
 class ColorExtractor(RegionDetection):
   '''
@@ -43,3 +44,10 @@ class ColorExtractor(RegionDetection):
   
   def rgb_to_hex(self, color):
     return "#{:02x}{:02x}{:02x}".format(color[0], color[1], color[2])
+  
+  def etxract_grid_color(self):
+    x, y, w, h = cv2.boundingRect(self.largest_contour)
+    cropped_image = self.image[y:y+h, x:x+w]
+
+  def group_color(self, color1, color2, threshold=30):
+     pass

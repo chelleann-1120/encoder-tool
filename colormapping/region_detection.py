@@ -25,17 +25,7 @@ class RegionDetection:
     return contours
 
   def detect_grid(self):
-    max_area = 0
-    largest_contour = None
-
-    for contour in self.contours:
-      area = cv2.contourArea(contour)
-
-      if area > max_area:
-        max_area = area
-        largest_contour = contour
-
-    # Assuming that this is the gridcell
+    largest_contour = max(self.contours, key=cv2.contourArea)
     return largest_contour
   
   def detect_color_legend(self):
