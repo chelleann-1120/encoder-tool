@@ -1,11 +1,11 @@
 import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
-from color_extraction import ColorExtractor
+from region_detection import RegionDetection
 import pytesseract
 import os
 
-class TextExtraction(ColorExtractor):
+class TextExtraction(RegionDetection):
   '''
   Extracts the text in the given region of interest.
   '''
@@ -67,9 +67,3 @@ class TextExtraction(ColorExtractor):
     legend_text = pytesseract.image_to_string(roi_image, config=custom_config)
 
     return legend_text
-
-  def display_image(self):
-    
-    plt.imshow(cv2.cvtColor(self.image_np, cv2.COLOR_BGR2RGB))
-    plt.axis('off')  # Hide the axis
-    plt.show()

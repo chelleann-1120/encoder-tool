@@ -25,6 +25,7 @@ class RegionDetection:
     return contours
 
   def detect_grid(self):
+    
     largest_contour = max(self.contours, key=cv2.contourArea)
     return largest_contour
   

@@ -3,7 +3,6 @@ import cv2
 from PIL import Image
 import matplotlib.pyplot as plt
 from region_detection import RegionDetection
-from collections import defaultdict
 
 class ColorExtractor(RegionDetection):
   '''
@@ -27,27 +26,59 @@ class ColorExtractor(RegionDetection):
     seen = set()
 
     for color in flattened_colors:
-        color_tuple = tuple(color)
+      color_tuple = tuple(color)
 
-        if color_tuple not in seen:
-            seen.add(color_tuple)
-            unique_colors.append(color)
+      if color_tuple not in seen:
+        seen.add(color_tuple)
+        unique_colors.append(color)
 
-    hex_colors = [self.rgb_to_hex(color) for color in unique_colors]
-    return hex_colors
+    return unique_colors
   
-    plt.figure(figsize=(10, 2))
-    plt.imshow([unique_colors], aspect='auto')
-    plt.title(self.image_path)
-    plt.axis('off')
-    plt.show()
-  
-  def rgb_to_hex(self, color):
-    return "#{:02x}{:02x}{:02x}".format(color[0], color[1], color[2])
-  
-  def etxract_grid_color(self):
+  def extract_grid_color(self):
+    # Get the bounding box of the largest contour
     x, y, w, h = cv2.boundingRect(self.largest_contour)
+
+    # Crop the region of interest from the original image using the bounding box
     cropped_image = self.image[y:y+h, x:x+w]
 
-  def group_color(self, color1, color2, threshold=30):
-     pass
+    num_regions_y = self.yaxis_len
+    num_regions_x = self.xaxis_len
+
+    # Calculate the new dimensions that are divisible by the specified number of regions
+    new_height = (h // num_regions_y) * num_regions_y
+    new_width = (w // num_regions_x) * num_regions_x
+
+    # Resize the cropped image to the new dimensions while maintaining the aspect ratio
+    resized_image = cv2.resize(cropped_image, (new_width, new_height))
+    resized_image_rgb = cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB)
+
+    # Calculate the width and height of each smaller region
+    region_height = new_height // num_regions_y
+    region_width = new_width // num_regions_x
+
+    dominant_colors = []
+
+    # Extract and display each smaller region
+    for i in range(num_regions_y):
+      for j in range(num_regions_x):
+          
+        start_y = i * region_height
+        end_y = start_y + region_height
+        start_x = j * region_width
+        end_x = start_x + region_width
+        smaller_region = resized_image_rgb[start_y:end_y, start_x:end_x]
+
+        # Convert the smaller region to a 2D array of pixels
+        pixels = smaller_region.reshape((-1, 3))
+        pixels = np.float32(pixels)
+
+        # Define criteria and apply K-means clustering
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
+        k = 1
+        _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+
+        # Get the dominant color
+        dominant_color = centers[0].astype(int)
+        dominant_colors.append(dominant_color)
+
+    return dominant_colors

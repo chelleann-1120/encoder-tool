@@ -1,5 +1,7 @@
 from text_extraction import TextExtraction
-from format_text import GridProcessor
+from format_text import TextFormatter
+from grid_processor import GridProcessor
+from format_data import DataFormatter
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -19,8 +21,16 @@ class HeatmapEncoder:
       
       image_path = os.path.join(self.input_dir, image)
       values = TextExtraction(image_path, image)
-      matrix = GridProcessor(values)
-      matrix.grid_color_matrix()
+      values.draw_bounding_box(values.detect_title_roi())
+
+      clean_values = TextFormatter(values)
+
+      # Pre-processing the data for decoder
+      #converted_values = DataFormatter(clean_values)
+
+      matrix = GridProcessor(clean_values, image_path, image)
+
+      #print(image , matrix.grid_color_matrix())
 
 if __name__ == "__main__":
   input_dir = "D:\\encoder-tool\\generated-heatmaps"
