@@ -78,7 +78,7 @@ class ColorExtractor(RegionDetection):
         _, labels, centers = cv2.kmeans(pixels, k, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
 
         # Get the dominant color
-        dominant_color = centers[0].astype(int)
+        dominant_color = centers[0].astype(int).tolist()
         dominant_colors.append(dominant_color)
 
     return dominant_colors

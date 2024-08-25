@@ -40,8 +40,7 @@ class TextExtraction(RegionDetection):
 
   def extract_xaxis_labels(self):
     
-    xaxis_roi = self.detect_xaxis_roi()
-    cropped_image = Image.fromarray(cv2.cvtColor(xaxis_roi, cv2.COLOR_BGR2RGB))
+    cropped_image = Image.fromarray(cv2.cvtColor(self.xaxis_roi, cv2.COLOR_BGR2RGB))
     rotated_image = cropped_image.rotate(-90, expand=True)
     
     xaxis_text = pytesseract.image_to_string(rotated_image)

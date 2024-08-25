@@ -25,7 +25,7 @@ class RegionDetection:
     return contours
 
   def detect_grid(self):
-    
+
     largest_contour = max(self.contours, key=cv2.contourArea)
     return largest_contour
   
@@ -37,17 +37,28 @@ class RegionDetection:
       if 1000 < area < 10000:
         return contour
 
-  # Display the cropped region of interest
+  # Displays the region of interest
   def draw_bounding_box(self, roi):
 
+    # Convert the ROI to grayscale
     gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    
+    # Calculate the bounding box coordinates
     x, y, w, h = cv2.boundingRect(gray_roi)
-    cv2.rectangle(self.image_np, (x, y), (x + w, y + h), (0, 255, 0), 2)
-    plt.imshow(cv2.cvtColor(self.image_np, cv2.COLOR_BGR2RGB))
-    plt.title("Bounding Box")
+    
+    # Debug: Print the coordinates
+    print(f"Bounding Box Coordinates: x={x}, y={y}, w={w}, h={h}")
+    
+    # Draw the bounding box on the original image
+    cv2.rectangle(self.image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    
+    # Debug: Display the grayscale ROI
+    plt.imshow(gray_roi, cmap='gray')
+    plt.title("Grayscale ROI")
     plt.axis('off')
     plt.show()
-  
+
+
   def detect_title_roi(self):
     
     if self.largest_contour is not None:
