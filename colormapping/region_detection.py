@@ -31,11 +31,16 @@ class RegionDetection:
   
   def detect_color_legend(self):
   
-    for contour in self.contours:
-      area = cv2.contourArea(contour)
-
-      if 1000 < area < 10000:
-        return contour
+    # Calculate areas for all contours
+    contours_with_areas = [(contour, cv2.contourArea(contour)) for contour in self.contours]
+    
+    # Sort contours by area in descending order
+    sorted_contours = sorted(contours_with_areas, key=lambda x: x[1], reverse=True)
+    
+    # Return the second largest contour if it exists
+    if len(sorted_contours) > 1:
+      second_largest_contour = sorted_contours[1][0]
+      return second_largest_contour
 
   # Displays the region of interest
   def draw_bounding_box(self, roi):

@@ -48,8 +48,13 @@ class ColorMapping(ColorExtractor):
       closest_color = self.find_closest_color(color_tuple, legend_dict)
 
       if closest_color is not None:
-        mapped_legend_values.append((closest_color, legend_dict[closest_color]))
+        # mapped_legend_values.append([closest_color, legend_dict[closest_color]])
+        mapped_legend_values.append(legend_dict[closest_color])
       else:
         mapped_legend_values.append((color_tuple, None))  # Handle case where no close color is found
     
+    # mapped_legend_values = [
+    # [closest_color, legend_dict[closest_color]] if (closest_color := self.find_closest_color(tuple(color), legend_dict)) is not None else (tuple(color), None)
+    # for color in self.grid_colors] # Removing inner lists if both rgb and legend values are included, no need if legend values only
+
     return mapped_legend_values

@@ -4,13 +4,13 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 # Example data matrix
 data = [
-        ['2020.2021', 'Argentina', (185,155,125), '1 to 20', 'Absence of Corruption (IDEA)'],
+        ['2020.2021', 'Argentina', (185,155,125), '1 to 20'],
         ['2022.2023', 'Argentina', (155,185,125), '20 to 40'],
         ['2021.2022', 'Brazil', (155,155,185), '10 to 30']
 ]
 
 # Convert to DataFrame
-df = pd.DataFrame(data, columns=['Year', 'Country', 'Color', 'Range', 'Chart Title'])
+df = pd.DataFrame(data, columns=['Year', 'Country', 'Color', 'Range'])
 
 # Convert 'Year' to a numerical value
 df['Year'] = df['Year'].apply(lambda x: (int(x.split('.')[0]) + int(x.split('.')[1])) / 2)
