@@ -1,9 +1,4 @@
-from text_extraction import TextExtraction
-from format_text import TextFormatter
-from grid_processor import GridProcessor
 import os
-import numpy as np
-import matplotlib.pyplot as plt
 from heatmap_processor import HeatmapProcessor
 
 
