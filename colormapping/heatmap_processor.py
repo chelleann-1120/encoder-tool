@@ -6,9 +6,11 @@ import os
 
 class HeatmapProcessor:
 
-  def __init__(self, input_dir, image):
+  def __init__(self, input_dir):
     self.input_dir = input_dir
-    self.image = image
+    self.images = os.listdir(input_dir)
+    self.max_len = 0
+    self.image = ""
 
   def process(self):
     image_path = os.path.join(self.input_dir, self.image)
@@ -18,28 +20,27 @@ class HeatmapProcessor:
       clean_values = TextFormatter(values)
       matrix_values = GridProcessor(clean_values, image_path, self.image).create_grid_matrix()
 
-      x_values = list(map(lambda items: items[0], matrix_values))
-      y_values = list(map(lambda items: items[1], matrix_values))
-      legend_values = list(map(lambda items: items[2], matrix_values))
-
-      return len(x_values), len(y_values), len(legend_values)
+      return len(matrix_values)
 
     except Exception as e:
       print(f"Error processing image {self.image}: {e}")
 
-  def find_max_length(self, x_max_len, y_max_len, legend_max_len):
+  def find_max_length(self):
 
-    x_len, y_len, legend_len = self.process()
+    for image in self.images:
 
-    if x_len > x_max_len:
-      x_max_len = x_len
+      self.image = image
+      length = self.process()
+
+      if length > self.max_len:
+        self.max_len = length
+        print(self.max_len)
     
-    if y_len > y_max_len:
-      y_max_len = y_len
-    
-    if legend_len > legend_max_len:
-      legend_max_len = legend_len
+    return self.max_len
+  
+  def insert_padding(self):
+    pass
 
-    print(x_max_len, y_max_len, legend_max_len)
-    return x_max_len, y_max_len, legend_max_len
+  def separate_categories(self):
+    pass
 
