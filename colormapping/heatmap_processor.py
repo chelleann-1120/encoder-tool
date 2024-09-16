@@ -2,6 +2,9 @@ from text_extraction import TextExtraction
 from format_text import TextFormatter
 from grid_processor import GridProcessor
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+from sklearn.preprocessing import LabelEncoder
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 class HeatmapProcessor:
@@ -38,8 +41,22 @@ class HeatmapProcessor:
     
     return self.max_len
   
-  def insert_padding(self):
-    pass
+  def encode_and_pad_texts(self):
+    # Encode the categories, for loop again?
+    x_encoder = LabelEncoder()
+    y_encoder = LabelEncoder()
+    legend_encoder = LabelEncoder()
+
+    x_encoded = x_encoder.fit_transform(self.x_axis)
+    y_encoded = y_encoder.fit_transform(self.y_axis)
+    legend_encoded = legend_encoder.fit_transform(self.legend_values)
+
+    # Pad sequences to the same length
+    x_padded = pad_sequences([x_encoded], maxlen=self.max_x_length, padding='post')[0]
+    y_padded = pad_sequences([y_encoded], maxlen=self.max_y_length, padding='post')[0]
+    legend_padded = pad_sequences([legend_encoded], maxlen=self.max_legend_length, padding='post')[0]
+
+    return x_padded, y_padded, legend_padded, x_encoder, y_encoder, legend_encoder
 
   def separate_categories(self):
     pass
