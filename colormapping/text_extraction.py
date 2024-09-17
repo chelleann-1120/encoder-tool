@@ -1,9 +1,8 @@
 import cv2
 from PIL import Image
-import matplotlib.pyplot as plt
 from region_detection import RegionDetection
 import pytesseract
-import os
+
 
 class TextExtraction(RegionDetection):
   '''

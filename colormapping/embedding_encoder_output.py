@@ -39,11 +39,10 @@ def preprocess_features(matrix_values):
     for country_vector, year_vector, legend_range_vector in zip(country_vectors, year_vectors, legend_range_vectors):
         grouped_vectors.append([country_vector, year_vector, legend_range_vector])
 
-    grouped_vectors = preprocess_features(matrix_values)
-    print("Grouped Vectors:")
     for group in grouped_vectors:
         group_as_list = [tensor.numpy().tolist() for tensor in group]
-        print(group_as_list)
+    
+    print(group_as_list)
     print(len(grouped_vectors))
     return grouped_vectors
 

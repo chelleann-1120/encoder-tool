@@ -26,26 +26,21 @@ class HeatmapProcessor:
       matrix_values = GridProcessor(clean_values, image_path, self.image).create_grid_matrix()
 
       # print(matrix_values)
-      # return len(matrix_values)
-      return matrix_values
+      return len(matrix_values)
 
     except Exception as e:
       print(f"Error processing image {self.image}: {e}")
 
   def find_max_length(self):
 
-    count = 0
-
     for image in self.images:
-      
-      count+=1
 
       self.image = image
       length = self.process()
 
       if length > self.max_len:
         self.max_len = length
-        print(f"Image no: {count}, Length: {self.max_len}")
+        print(self.max_len)
     
     return self.max_len
   

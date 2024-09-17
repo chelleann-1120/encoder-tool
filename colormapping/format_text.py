@@ -1,6 +1,3 @@
-import cv2
-import numpy as np
-
 class TextFormatter:
     
   def __init__(self, text):
