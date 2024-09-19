@@ -1,5 +1,3 @@
-import cv2
-import numpy as np
 from color_mapping import ColorMapping
 
 class GridProcessor(ColorMapping):

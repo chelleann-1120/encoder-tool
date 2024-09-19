@@ -2,7 +2,6 @@ from text_extraction import TextExtraction
 from format_text import TextFormatter
 from grid_processor import GridProcessor
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import Model
@@ -25,7 +24,7 @@ class HeatmapProcessor:
       clean_values = TextFormatter(values)
       matrix_values = GridProcessor(clean_values, image_path, self.image).create_grid_matrix()
 
-      # print(matrix_values)
+      print(matrix_values)
       return len(matrix_values)
 
     except Exception as e:
