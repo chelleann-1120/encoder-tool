@@ -10,51 +10,45 @@ class EmbeddingLayer:
         self.hashing_layer = tf.keras.layers.Hashing(num_bins=1000)
 
     def get_yaxis_embedding(self, yaxis_label):
-        yaxis_idx = self.hashing_layer(tf.convert_to_tensor([yaxis_label]))
-        embedding = tf.keras.layers.Embedding(input_dim=1000, output_dim=300)(yaxis_idx)
-        return embedding
+        yaxis_idx = self.hashing_layer(tf.convert_to_tensor(yaxis_label, dtype=tf.string))
+        return self.get_embedding_layer(yaxis_idx)
 
     def get_legend_embedding(self, legend_values):
-        # Convert the legend range to a string and hash it
-        legend_idx = self.hashing_layer(tf.convert_to_tensor([legend_values]))
-        embedding = tf.keras.layers.Embedding(input_dim=1000, output_dim=50)(legend_idx)
-        return embedding
+        legend_idx = self.hashing_layer(tf.convert_to_tensor(legend_values, dtype=tf.string))
+        return self.get_embedding_layer(legend_idx)
     
     def get_xaxis_embedding(self, xaxis_label):
-        xaxis_idx = self.hashing_layer(tf.convert_to_tensor([xaxis_label]))
-        embedding = tf.keras.layers.Embedding(input_dim=1000, output_dim=300)(xaxis_idx)
-        return embedding
+        xaxis_idx = self.hashing_layer(tf.convert_to_tensor(xaxis_label, dtype=tf.string))
+        return self.get_embedding_layer(xaxis_idx)
+    
+    def get_embedding_layer(self, input):
+        embedding_layer = tf.keras.layers.Embedding(input_dim=1000, output_dim=5)
+        return embedding_layer(input)
 
     def preprocess_features(self):
-        country_vectors = []
-        year_vectors = []
-        #rgb_vectors = [] 
-        legend_range_vectors = []
-
-        for country, year_range, legend_range in self.matrix_values:
-            # Process country
-            country_vector = self.get_yaxis_embedding(country)
-            country_vectors.append(tf.reshape(country_vector, [-1]))
-
-            year_vector = self.get_xaxis_embedding(year_range)
-            year_vectors.append(tf.reshape(year_vector, [-1]))
-
-            # Process legend range using hashing and embedding
-            if legend_range != 'NaN':
-                legend_vector = self.get_legend_embedding(legend_range)
-                legend_range_vectors.append(tf.reshape(legend_vector, [-1]))
-            else:
-                # Handle NaN or invalid legend range
-                legend_range_vectors.append(tf.zeros(50)) 
-
-        # Concatenate all features
+        #rgb_vectors = []
+        legend_val_vector = 0
         grouped_vectors = []
 
-        for cell in zip(country_vectors, year_vectors, legend_range_vectors):
-            grouped_vectors.append([cell])
-            print(cell)
+        for x_value, y_value, legend_value in self.matrix_values:
+            # Process country
+            y_value_vector = self.get_yaxis_embedding(y_value)
+            x_value_vector = self.get_xaxis_embedding(x_value)
+
+            # Process legend range using hashing and embedding
+            if legend_value != 'NaN':
+                legend_vector = self.get_legend_embedding(legend_value)
+                legend_val_vector = tf.reshape(legend_vector, [-1])
+            else:
+                # Handle NaN or invalid legend range
+                legend_val_vector = tf.zeros(5)
+
+            combined_vector = tf.stack([x_value_vector, y_value_vector, legend_val_vector], axis=1)
+            grouped_vectors.append(combined_vector)
+
+        grouped_vectors_3d = tf.convert_to_tensor(grouped_vectors)
+        return grouped_vectors_3d
         
-        return grouped_vectors
 
 matrix_values = [
     ['Sierra Leone', '1999.2001', 'NaN'], 
@@ -79,4 +73,5 @@ matrix_values = [
     ['China', '2002.2003', 'NaN']
 ]
 
-EmbeddingLayer(matrix_values=matrix_values).preprocess_features()
+value = EmbeddingLayer(matrix_values=matrix_values).preprocess_features()
+print(value)
